@@ -14,8 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checkout source code from your version control system (e.g., Git)
-                    checkout scm
+                     git branch: 'main', url: 'https://github.com/santoshbd67/ThreeTierAppChallenge.git'
                 }
             }
         }
@@ -23,7 +22,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
                     sh "docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ."
                 }
             }
@@ -32,7 +30,6 @@ pipeline {
         stage('Login to ECR') {
             steps {
                 script {
-                    // Log in to AWS ECR using AWS CLI
                     sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REGISTRY"
                 }
             }
@@ -41,7 +38,6 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    // Push the Docker image to ECR
                     sh "docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
                 }
             }
