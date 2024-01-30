@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        // AWS ECR registry URL
+        ECR_REGISTRY = "123456789012.dkr.ecr.us-east-1.amazonaws.com"
+        // ECR repository name
+        ECR_REPOSITORY = "my-ecr-repo"
+        // Docker image tag
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    // Checkout source code from your version control system (e.g., Git)
+                    checkout scm
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh "docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ."
+                }
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    // Log in to AWS ECR using AWS CLI
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REGISTRY"
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    // Push the Docker image to ECR
+                    sh "docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+                }
+            }
+        }
+    }
+}
