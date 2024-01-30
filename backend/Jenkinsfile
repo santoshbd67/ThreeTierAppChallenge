@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                  git branch: 'main', url: 'https://github.com/santoshbd67/a-reddit-clone.git'
+                  git branch: 'main', url: 'https://github.com/santoshbd67/ThreeTierAppChallenge.git'
             }
         }
 
