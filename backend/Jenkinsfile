@@ -1,44 +1,27 @@
 pipeline {
     agent any
-
-    environment {
-        // AWS ECR registry URL
-        ECR_REGISTRY = "123456789012.dkr.ecr.us-east-1.amazonaws.com"
-        // ECR repository name
-        ECR_REPOSITORY = "my-ecr-repo"
-        // Docker image tag
-        IMAGE_TAG = "latest"
+   
+    environment{
+        SCANNER_HOME=tool 'sonar-scanner'
+        
     }
 
     stages {
-        stage('Checkout') {
+        stage('git checkout') {
             steps {
-                script {
-                  git branch: 'main', url: 'https://github.com/santoshbd67/ThreeTierAppChallenge.git'
+                git changelog: false, poll: false, url: 'https://github.com/santoshbd67/ThreeTierAppChallenge.git'
             }
         }
-
-        stage('Build Docker Image') {
+        
+        stage('build and push docker images') {
             steps {
-                script {
-                    sh "docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ."
-                }
-            }
-        }
-
-        stage('Login to ECR') {
-            steps {
-                script {
-                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REGISTRY"
-                }
-            }
-        }
-
-        stage('Push Docker Image to ECR') {
-            steps {
-                script {
-                    sh "docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-                }
+               script{
+                   withDockerRegistry(credentialsId: 'dockerhub') {
+                       sh "docker build -t backend ."
+                       sh "docker tag backend santoshbd67/backend:latest"
+                       sh "docker push santoshbd67/backend:latest"
+                 }
+               }
             }
         }
     }
