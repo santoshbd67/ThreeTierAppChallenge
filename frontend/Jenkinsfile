@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // AWS ECR registry URL
-        ECR_REGISTRY = "123456789012.dkr.ecr.us-east-1.amazonaws.com"
+        ECR_REGISTRY = "471112735126.dkr.ecr.us-east-1.amazonaws.com"
         // ECR repository name
-        ECR_REPOSITORY = "my-ecr-repo"
+        ECR_REPOSITORY = "3tier-frontend"
         // Docker image tag
         IMAGE_TAG = "latest"
     }
